@@ -1,10 +1,34 @@
+variable "ami_id" {
+    description = "ID de la AMI"
+    default = "ami-0b4624933067d393a"
+    
+  }
+
+variable "instance_type" {
+  description = "Tipo de la instancia EC2"
+  default = "t3.micro"
+  
+}
+
+variable "server_name" {
+  description = "Nombre del servidor web"
+  default = "nginx-server"
+
+}
+
+variable "enviroment" {
+  description = "Ambiente de la aplicacion"
+  default = "test"
+  
+}
+
 provider "aws" {
   region = "us-east-2"
 }
 
 resource "aws_instance" "nginx-server" {
-  ami           = "ami-00eb69d236edcfaf8"
-  instance_type = "t3.micro"
+  ami           = var.ami_id
+  instance_type = var.instance_type
 
     user_data = <<-EOF
                 #!/bin/bash
@@ -23,8 +47,8 @@ resource "aws_instance" "nginx-server" {
   ]
 
   tags = {
-    Name = "nginx-server"
-    Enviroment = "test"
+    Name = var.server_name
+    Enviroment = var.enviroment
     Owner = "ivanocampo07@gmail.com"
     Team = "Cloud-deveploment"
     Project = "practica"
@@ -32,12 +56,12 @@ resource "aws_instance" "nginx-server" {
 }
 
 resource "aws_key_pair" "nginx_server_ssh" {
-  key_name   = "nginx-server-ssh"
-  public_key = file("nginx-server.key.pub")
+  key_name   = "${var.server_name}-ssh"
+  public_key = file("${var.server_name}.key.pub")
 
   tags = {
-    Name = "nginx-server-ssh"
-    Enviroment = "test"
+    Name = "${var.server_name}-ssh"
+    Enviroment = var.enviroment
     Owner = "ivanocampo07@gmail.com"
     Team = "Cloud-deveploment"
     Project = "practica"
@@ -45,7 +69,7 @@ resource "aws_key_pair" "nginx_server_ssh" {
 }
 
 resource "aws_security_group" "nginx_server_sg" {
-  name        = "nginx-server-sg"
+  name        = "${var.server_name}-sg"
   description = "Allow SSH and HTTP access"
 
   ingress {
@@ -70,8 +94,8 @@ resource "aws_security_group" "nginx_server_sg" {
   }
 
   tags = {
-    Name = "nginx-server-security-group"
-    Enviroment = "test"
+    Name = "${var.server_name}-security-group"
+    Enviroment = var.enviroment
     Owner = "ivanocampo07@gmail.com"
     Team = "Cloud-deveploment"
     Project = "practica"
@@ -87,3 +111,5 @@ resource "aws_security_group" "nginx_server_sg" {
     description = "DNS publicO de la instancia EC2"
     value = aws_instance.nginx-server.public_dns  
   }
+
+  
