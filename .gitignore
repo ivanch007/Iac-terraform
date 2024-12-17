@@ -45,4 +45,8 @@ terraform.rc
 # Ignorar archivos específicos
 nginx-server.key
 nginx-server.key.pub
+nginx-server-dev.key
+nginx-server-dev.key.pub
+nginx-server-qa.key
+nginx-server-qa.key.pub
 
